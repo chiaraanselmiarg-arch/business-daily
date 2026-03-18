@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Business Daily</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #0f0e0d; --paper: #f7f4ef; --accent: #c8382a;
+  --muted: #7a7570; --border: #d6cfc4; --card: #ffffff;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'DM Sans', sans-serif; background: var(--paper); color: var(--ink); min-height: 100vh; }
+.masthead { border-bottom: 3px double var(--ink); padding: 0 1.5rem; background: var(--paper); }
+.masthead-top { display: flex; align-items: center; justify-content: space-between; padding: 10px 0 8px; border-bottom: 1px solid var(--border); gap: 12px; }
+.date-label { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.05em; text-transform: uppercase; }
+.logo { font-family: 'Playfair Display', serif; font-size: 30px; font-weight: 900; text-align: center; }
+.logo span { color: var(--accent); }
+.tagline { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; text-align: right; }
+.nav { display: flex; align-items: center; gap: 5px; padding: 8px 0; overflow-x: auto; scrollbar-width: none; flex-wrap: wrap; }
+.nav::-webkit-scrollbar { display: none; }
+.rbtn { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; padding: 4px 10px; border: 1px solid var(--border); background: transparent; color: var(--muted); cursor: pointer; transition: all 0.15s; white-space: nowrap; border-radius: 2px; }
+.rbtn:hover { border-color: var(--ink); color: var(--ink); }
+.rbtn.active { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.fetch-btn { margin-left: auto; font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; padding: 6px 14px; background: var(--accent); color: white; border: none; cursor: pointer; transition: background 0.15s; border-radius: 2px; white-space: nowrap; flex-shrink: 0; }
+.fetch-btn:hover { background: #a82d22; }
+.fetch-btn:disabled { background: var(--muted); cursor: not-allowed; }
+.wrap { max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem; }
+.state { display: none; flex-direction: column; align-items: center; justify-content: center; padding: 5rem 2rem; gap: 14px; text-align: center; }
+.state.on { display: flex; }
+.spinner { width: 28px; height: 28px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.state-title { font-family: 'Playfair Display', serif; font-size: 26px; }
+.state-text { font-size: 13px; color: var(--muted); max-width: 320px; line-height: 1.7; }
+.mono-sm { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); letter-spacing: 0.05em; }
+.bar { width: 50px; height: 3px; background: var(--accent); }
+.start-btn { font-family: 'DM Mono', monospace; font-size: 11px; padding: 10px 22px; background: var(--accent); color: white; border: none; cursor: pointer; letter-spacing: 0.08em; text-transform: uppercase; border-radius: 2px; }
+.start-btn:hover { background: #a82d22; }
+.headline-grid { display: grid; grid-template-columns: 1fr 1px 250px; gap: 1.5rem; padding-bottom: 2rem; border-bottom: 2px solid var(--ink); margin-bottom: 2rem; align-items: start; }
+.vline { background: var(--border); }
+.hl-cat { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; }
+.hl-num { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); margin-bottom: 6px; letter-spacing: 0.05em; }
+.hl-title { font-family: 'Playfair Display', serif; font-size: 34px; font-weight: 900; line-height: 1.08; letter-spacing: -0.02em; margin-bottom: 14px; }
+.hl-summary { font-size: 14px; line-height: 1.7; color: #3a3632; }
+.hl-meta { display: flex; align-items: center; gap: 10px; margin-top: 14px; font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); flex-wrap: wrap; }
+.dot { width: 3px; height: 3px; border-radius: 50%; background: var(--muted); }
+.sb-story { padding-bottom: 14px; margin-bottom: 14px; border-bottom: 1px solid var(--border); }
+.sb-story:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+.sb-tag { display: inline-block; font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.07em; text-transform: uppercase; padding: 2px 7px; background: var(--ink); color: var(--paper); border-radius: 2px; margin-bottom: 5px; }
+.sb-num { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 900; color: var(--border); line-height: 1; margin-bottom: 3px; }
+.sb-title { font-family: 'Playfair Display', serif; font-size: 14px; font-weight: 700; line-height: 1.3; margin-bottom: 5px; }
+.sb-sum { font-size: 12px; color: var(--muted); line-height: 1.5; }
+.sec-label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 1rem; display: flex; align-items: center; gap: 10px; }
+.sec-label::before, .sec-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1.1rem; }
+.card { background: var(--card); border: 1px solid var(--border); padding: 1rem; border-radius: 3px; transition: transform 0.15s, box-shadow 0.15s; }
+.card:hover { transform: translateY(-2px); box-shadow: 0 4px 14px rgba(0,0,0,0.07); }
+.ctag { display: inline-block; font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.07em; text-transform: uppercase; padding: 2px 8px; border-radius: 2px; margin-bottom: 9px; }
+.t-markets { background: #1a3a6b; color: #fff; }
+.t-tech    { background: #2d5a27; color: #fff; }
+.t-macro   { background: #5a2d00; color: #fff; }
+.t-deals   { background: #4a1a6b; color: #fff; }
+.t-energy  { background: #6b4a00; color: #fff; }
+.t-gen     { background: #0f0e0d; color: #f7f4ef; }
+.card-title { font-family: 'Playfair Display', serif; font-size: 15px; font-weight: 700; line-height: 1.3; margin-bottom: 7px; }
+.card-sum { font-size: 12px; color: var(--muted); line-height: 1.6; }
+.card-foot { margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--border); font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); }
+#newsArea { display: none; }
+#newsArea.on { display: block; }
+.err-box { background: #fff5f5; border: 1px solid #f0c0c0; border-radius: 6px; padding: 1.5rem; text-align: center; }
+.err-box p { font-size: 13px; color: #a32d2d; line-height: 1.6; margin-bottom: 8px; }
+.err-box small { font-size: 11px; color: var(--muted); }
+footer { margin-top: 3rem; padding: 1.2rem 1.5rem; border-top: 3px double var(--ink); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+footer p { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.04em; }
+@media (max-width: 700px) {
+  .tagline { display: none; }
+  .logo { font-size: 22px; }
+  .headline-grid { grid-template-columns: 1fr; }
+  .vline { display: none; }
+  .hl-title { font-size: 24px; }
+  .cards { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<header class="masthead">
+  <div class="masthead-top">
+    <div class="date-label" id="todayDate"></div>
+    <div class="logo">Business<span>Daily</span></div>
+    <div class="tagline">Inteligencia global<br>de negocios</div>
+  </div>
+  <nav class="nav">
+    <button class="rbtn active" data-r="global">🌍 Global</button>
+    <button class="rbtn" data-r="usa">🇺🇸 EE.UU.</button>
+    <button class="rbtn" data-r="europe">🇪🇺 Europa</button>
+    <button class="rbtn" data-r="asia">🌏 Asia</button>
+    <button class="rbtn" data-r="latam">🌎 Latam</button>
+    <button class="rbtn" data-r="markets">📈 Mercados</button>
+    <button class="rbtn" data-r="tech">💻 Tech</button>
+    <button class="fetch-btn" id="fetchBtn" onclick="fetchNews()">↻ Obtener noticias</button>
+  </nav>
+</header>
+
+<main class="wrap">
+  <div class="state on" id="stEmpty">
+    <div class="bar"></div>
+    <h2 class="state-title">Noticias de hoy</h2>
+    <p class="state-text">Haz clic para recibir las noticias de negocios más importantes del mundo ahora mismo, en tiempo real.</p>
+    <button class="start-btn" onclick="fetchNews()">Obtener noticias de hoy →</button>
+  </div>
+  <div class="state" id="stLoad">
+    <div class="spinner"></div>
+    <div class="mono-sm" id="loadTxt">Buscando noticias...</div>
+    <p class="state-text">Consultando fuentes globales de negocios y finanzas en tiempo real</p>
+  </div>
+  <div id="newsArea"></div>
+</main>
+
+<footer>
+  <p>© Business Daily — Powered by Claude AI</p>
+  <p id="lastUp"></p>
+</footer>
+
+<script>
+const QUERIES = {
+  global:  "most important business financial news today worldwide",
+  usa:     "top US business economy stock market news today",
+  europe:  "Europe business economy finance news today",
+  asia:    "Asia Pacific business markets economy news today",
+  latam:   "Latin America business economy news today",
+  markets: "stock markets Wall Street financial markets news today",
+  tech:    "big tech technology companies business news today"
+};
+
+let region = 'global';
+let newsLoaded = false;
+const now = new Date();
+document.getElementById('todayDate').textContent = now.toLocaleDateString('es-ES',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+
+document.querySelectorAll('.rbtn').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('.rbtn').forEach(x => x.classList.remove('active'));
+  b.classList.add('active');
+  region = b.dataset.r;
+  if (newsLoaded) fetchNews();
+}));
+
+function showState(id) {
+  document.getElementById('stEmpty').classList.remove('on');
+  document.getElementById('stLoad').classList.remove('on');
+  document.getElementById('newsArea').classList.remove('on');
+  if (id === 'news') document.getElementById('newsArea').classList.add('on');
+  else document.getElementById(id).classList.add('on');
+}
+
+function tagClass(cat) {
+  if (!cat) return 't-gen';
+  const c = cat.toLowerCase();
+  if (c.includes('mercado')||c.includes('bolsa')) return 't-markets';
+  if (c.includes('tecno')||c.includes('tech')) return 't-tech';
+  if (c.includes('econom')||c.includes('macro')) return 't-macro';
+  if (c.includes('fusi')||c.includes('deal')||c.includes('adqui')) return 't-deals';
+  if (c.includes('energ')||c.includes('petro')) return 't-energy';
+  return 't-gen';
+}
+
+function repairJSON(raw) {
+  let s = raw.replace(/```json\s*/gi,'').replace(/```\s*/g,'').trim();
+  const a = s.indexOf('{'), b = s.lastIndexOf('}');
+  if (a < 0 || b < 0) throw new Error('No se encontro JSON en la respuesta');
+  s = s.slice(a, b+1);
+  try { return JSON.parse(s); } catch(_) {}
+  s = s.replace(/[\u2018\u2019]/g,"'").replace(/[\u201C\u201D]/g,'"');
+  s = s.replace(/,\s*([}\]])/g,'$1');
+  s = s.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g,' ');
+  try { return JSON.parse(s); } catch(e) {
+    throw new Error('JSON invalido: ' + e.message.slice(0,80));
+  }
+}
+
+async function fetchNews() {
+  const btn = document.getElementById('fetchBtn');
+  btn.disabled = true; btn.textContent = 'Cargando...';
+  showState('stLoad');
+  const msgs = ['Buscando noticias...','Consultando fuentes globales...','Analizando titulares...','Preparando la edicion...'];
+  let mi = 0;
+  const iv = setInterval(() => { mi=(mi+1)%msgs.length; document.getElementById('loadTxt').textContent=msgs[mi]; }, 2200);
+  const rlabel = document.querySelector('.rbtn.active').textContent;
+  try {
+    const res = await fetch('/api/news', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ region, query: QUERIES[region] })
+    });
+    clearInterval(iv);
+    if (!res.ok) { const e = await res.json().catch(()=>({error:'Error desconocido'})); throw new Error(e.error||`Error ${res.status}`); }
+    const data = await res.json();
+    if (!data.text) throw new Error('Sin respuesta de la API');
+    const news = repairJSON(data.text);
+    newsLoaded = true;
+    renderNews(news, rlabel);
+    document.getElementById('lastUp').textContent = 'Actualizado: ' + new Date().toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'});
+  } catch(err) {
+    clearInterval(iv);
+    document.getElementById('newsArea').innerHTML = `<div class="err-box"><p><strong>Error:</strong> ${err.message}</p><small>Intenta de nuevo en unos segundos.</small></div>`;
+    showState('news');
+  } finally {
+    btn.disabled = false; btn.textContent = '↻ Obtener noticias';
+  }
+}
+
+function renderNews(d, rlabel) {
+  const h = d.headline || {};
+  const sidebar = (d.sidebar||[]).map((s,i)=>`
+    <div class="sb-story">
+      <span class="sb-tag">${s.category||'Negocios'}</span>
+      <div class="sb-num">0${i+2}</div>
+      <div class="sb-title">${s.title||''}</div>
+      <div class="sb-sum">${s.summary||''}</div>
+    </div>`).join('');
+  const cards = (d.cards||[]).map(c=>`
+    <div class="card">
+      <span class="ctag ${tagClass(c.category)}">${c.category||'Negocios'}</span>
+      <div class="card-title">${c.title||''}</div>
+      <div class="card-sum">${c.summary||''}</div>
+      <div class="card-foot">${c.region||rlabel}</div>
+    </div>`).join('');
+  document.getElementById('newsArea').innerHTML = `
+    <div class="headline-grid">
+      <div>
+        <div class="hl-cat">${h.category||'Negocios'}</div>
+        <div class="hl-num">01 — Titular principal</div>
+        <h1 class="hl-title">${h.title||''}</h1>
+        <p class="hl-summary">${h.summary||''}</p>
+        <div class="hl-meta">
+          <span>${rlabel}</span><div class="dot"></div>
+          <span>${h.region||'Global'}</span><div class="dot"></div>
+          <span>Impacto: ${h.impact||'Alto'}</span>
+        </div>
+      </div>
+      <div class="vline"></div>
+      <div>${sidebar}</div>
+    </div>
+    <div class="sec-label">Mas noticias hoy — ${rlabel}</div>
+    <div class="cards">${cards}</div>`;
+  showState('news');
+}
+</script>
+</body>
+</html>
