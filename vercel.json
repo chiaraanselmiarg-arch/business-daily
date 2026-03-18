@@ -1,1 +1,10 @@
-{}
+{
+  "builds": [
+    { "src": "index.html", "use": "@vercel/static" },
+    { "src": "api/news.js", "use": "@vercel/node" }
+  ],
+  "routes": [
+    { "src": "/api/news", "dest": "/api/news.js" },
+    { "src": "/(.*)", "dest": "/index.html" }
+  ]
+}
